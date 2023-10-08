@@ -13,6 +13,10 @@ const { Sequelize } = require("sequelize");
 const sequelizeConfig = require("./config/config");
 const User = require("./models/usermodel");
 const { log } = require("console");
+const cors = require('cors');
+app.use(cors({
+  origin: '*'
+}));
 
 //view engine 
 app.set('view engine','ejs');
