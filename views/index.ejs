@@ -182,7 +182,7 @@
               const rollNo = $(this).data("rollno");
               // Send an AJAX request to enroll endpoint
               $.ajax({
-                url: `http://localhost:3000/enroll/${rollNo}`,
+                url: `http://localhost:3000/enroll${rollNo}`,
                 type: "POST", // or 'GET' depending on your server endpoint
                 success: function (response) {
                   // Handle the response if needed
