@@ -16,6 +16,9 @@ const { log } = require("console");
 
 //view engine 
 app.set('view engine','ejs');
+
+//static files 
+app.use(express.static(__dirname + "/views"));
 const sequelize = new Sequelize(sequelizeConfig.development);
 (async () => {
   try {
@@ -32,6 +35,22 @@ app.get("/", (req, res) => {
   var Path = path.join(__dirname,"views","index");
   console.log("path:"+Path);
   res.render(Path);
+});
+
+//route to list users on webpage 
+
+app.get('/users', async (req, res) => {
+  try {
+    const users = await User.findAll({
+      where: {
+        fingerprint_id: null,
+      },
+    });
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.get("/enroll:rollNo", async (req, res) => {

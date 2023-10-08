@@ -1,1 +1,204 @@
-<h1>Welcome To Smartify</h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smartify</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
+      integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+      crossorigin="anonymous"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <style></style>
+    <!-- <div class="row">
+        <div class="col-lg-6">
+            <h1>Hello</h1>
+        </div>
+        <div class="col-lg-6">
+            <h1>World</h1>
+        </div>
+    </div> -->
+    <div>
+      <!-- Main Heading -->
+      <div class="text-center text-white bg-dark p-5">
+        <h1 class="text-uppercase">Enroll Fingerprint</h1>
+      </div>
+
+      <!-- Student Details -->
+      <div class="container">
+        <div class="row">
+          <div class="p-4 col text-primar">
+            <span class="h3 font-weight-bold text-p">DBIT<br /></span>
+            <span class="h5">Department of Information Technology<br /></span
+            ><br />
+            <span class="lead text-dark">List of Students</span>
+          </div>
+          <!-- <div class="p-4 col text-right">
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4uAfoapDbR_ycxF4hltMedCYIqj9bcOZB-ZuD8Sf89rdrGtTv" height="100px">
+            </div> -->
+        </div>
+      </div>
+
+      <!-- Students -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <table class="table table-bordered" id="user_table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">S. No.</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Roll No</th>
+                  <th scope="col">Year</th>
+                  <th scope="col">Branch</th>
+                  <th scope="col">Gender</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table for status -->
+      <!-- <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-hover thead-inverse">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Attendance %</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Subject-1</td>
+                  <td class="text-success">80</td>
+                </tr>
+                <tr>
+                  <td>Subject-2</td>
+                  <td class="text-danger">60</td>
+                </tr>
+                <tr>
+                  <td>Subject-3</td>
+                  <td class="text-success">75</td>
+                </tr>
+                <tr>
+                  <td>Subject-4</td>
+                  <td class="text-success">70</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- View More Details -->
+      <div class="bg-dark py-2">
+        <div class="container text-light">
+          <div class="py-3">
+            <h3>View more details</h3>
+            <label for="ayear">Attendance through the semester</label><br />
+            <button class="btn btn-outline-info">Veiw More Details</button>
+          </div>
+        </div>
+      </div>
+
+      <footer class="bg-gray text-white text-center p-2">
+        <small>@ Neel Patel - 2018</small>
+      </footer>
+    </div>
+    
+
+    <!-- <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script> -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"
+      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Add this script section to your HTML file -->
+    <script>
+      // Define a mapping function to convert year values
+      function mapYearToLabel(year) {
+        switch (year) {
+          case 1:
+            return "FE";
+          case 2:
+            return "SE";
+          case 3:
+            return "TE";
+          case 4:
+            return "BE";
+          default:
+            return "Unknown";
+        }
+      }
+
+      $(document).ready(function () {
+        console.log("Inside Jquery");
+        $.ajax({
+          url: "http://localhost:3000/users", // Route to fetch user data from your Node.js server
+          type: "GET",
+          dataType: "json",
+          success: function (data) {
+            // Populate the table with data
+            data.forEach(function (user, index) {
+              $("#user_table tbody").append(`
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${user.name}</td>
+                  <td>${user.roll_no}</td>
+                  <td>${mapYearToLabel(
+                    user.year
+                  )}</td> <!-- Use the mapping function here -->
+                  <td>${user.branch}</td>
+                  <td>${user.gender}</td>
+                  <td>
+                    <button class="enroll-button" data-rollno="${
+                      user.roll_no
+                    }">Enroll</button>
+                  </td>
+                </tr>
+              `);
+            });
+
+            // Add click event listener to "Enroll" buttons
+            $(".enroll-button").on("click", function () {
+              const rollNo = $(this).data("rollno");
+              // Send an AJAX request to enroll endpoint
+              $.ajax({
+                url: `http://localhost:3000/enroll/${rollNo}`,
+                type: "POST", // or 'GET' depending on your server endpoint
+                success: function (response) {
+                  // Handle the response if needed
+                  console.log("Enrollment request sent.");
+                },
+                error: function (error) {
+                  console.error(error);
+                },
+              });
+            });
+          },
+          error: function (error) {
+            console.error(error);
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
