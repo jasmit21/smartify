@@ -1,9 +1,11 @@
 console.log("Welcome");
+
 //sequelize setup
 
 // express
 
 const express = require("express");
+const axios = require("axios");
 const app = express();
 const port = 3000;
 const path = require('path');
@@ -35,14 +37,16 @@ app.get("/", (req, res) => {
 app.get("/enroll:rollNo", async (req, res) => {
   try {
     const { rollNo } = req.params; // Get the roll number from the URL parameter
-
+    const url = `http://192.168.1.109/enroll?option=1&id=${rollNo}`
+    console.log("url:" , url);
     // Send a request to the NodeMCU server to enroll the fingerprint
     const nodeMCUResponse = await axios.get(
       //ravi yaha pe apna nodemcu wala url daalna 
-      `http://nodemcu-server/enroll?rollNo=${rollNo}`
+      `http://192.168.1.109/enroll?option=1&id=${rollNo}`
     );
-
-    if (nodeMCUResponse.data.success === 1) {
+    // console.log(nodeMCUResponse);
+    console.log("Response: ",nodeMCUResponse.data);
+    if (nodeMCUResponse.data.status == 1) {
       // If enrollment is successful, update the user's fingerprint_id in the database
       const user = await User.findOne({ where: { roll_no: rollNo } });
 
