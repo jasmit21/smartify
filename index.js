@@ -50,7 +50,9 @@ app.get('/users', async (req, res) => {
         fingerprint_id: null,
       },
     });
+    console.log(users);
     res.json(users);
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -60,16 +62,16 @@ app.get('/users', async (req, res) => {
 app.get("/enroll:rollNo", async (req, res) => {
   try {
     const { rollNo } = req.params; // Get the roll number from the URL parameter
-    const url = `http://192.168.1.109/enroll?option=1&id=${rollNo}`
+    const url = `http://192.168.137.73/enroll?id=${rollNo}`
     console.log("url:" , url);
     // Send a request to the NodeMCU server to enroll the fingerprint
     const nodeMCUResponse = await axios.get(
       //ravi yaha pe apna nodemcu wala url daalna 
-      `http://192.168.1.109/enroll?option=1&id=${rollNo}`
+      `http://192.168.137.73/enroll?id=${rollNo}`
     );
     // console.log(nodeMCUResponse);
     console.log("Response: ",nodeMCUResponse.data);
-    if (nodeMCUResponse.data.status == 1) {
+    if (nodeMCUResponse.data.status == "Enrolled") {
       // If enrollment is successful, update the user's fingerprint_id in the database
       const user = await User.findOne({ where: { roll_no: rollNo } });
 
