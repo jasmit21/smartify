@@ -4,15 +4,14 @@ const ActiveSession = require("./activesession");
 const User = require("./usermodel");
 const sequelize = new Sequelize(sequelizeConfig.development);
 
+
+//hers user_id is roll no of the student
 const Attendance = sequelize.define('Attendance', {
-    id: {
+  AttendanceId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
-    },
-    AttendanceId: {
-      type: DataTypes.INTEGER,
     },
     SessionId: {
       type: DataTypes.INTEGER,
