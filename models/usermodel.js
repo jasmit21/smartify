@@ -31,6 +31,10 @@ const User = sequelize.define(
       allowNull:true,
       defaultValue:null,
     },
+    role: {
+      type: DataTypes.STRING, // Set the data type to VARCHAR
+      defaultValue: null, // Set the default value to null
+    },
   },
   {
     timestamps: false, // Disable createdAt and updatedAt columns
