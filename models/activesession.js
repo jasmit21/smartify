@@ -3,15 +3,13 @@ const { Sequelize, DataTypes } = require("sequelize");
 const sequelizeConfig = require("../config/config");
 const sequelize = new Sequelize(sequelizeConfig.development);
 
-const ActiveSession = sequelize.define('ActiveSession', {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
-    },
+const ActiveSession = sequelize.define('ActiveSessions', {
+    
     SessionId: {
       type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull:false
     },
     TeacherName: {
       type: DataTypes.STRING,
@@ -28,9 +26,10 @@ const ActiveSession = sequelize.define('ActiveSession', {
     TimeSlot: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    // Define other columns if needed
-  });
+    },},
+    {
+      timestamps: false, // Set timestamps to false
+    });
 
   ActiveSession.associate = (models) => {
     ActiveSession.hasMany(models.Attendance, { foreignKey: 'SessionId' });

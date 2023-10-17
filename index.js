@@ -1,5 +1,5 @@
 console.log("Welcome");
-const mysql = require('mysql');
+const mysql = require("mysql");
 
 //sequelize setup
 
@@ -9,24 +9,29 @@ const express = require("express");
 const axios = require("axios");
 const app = express();
 const port = 3000;
-const path = require('path');
+const path = require("path");
 const { Sequelize } = require("sequelize");
 const sequelizeConfig = require("./config/config");
 const User = require("./models/usermodel");
 const Attendance = require("./models/attendancemodel");
-const ActiveSession = require('./models/activesession'); 
+const ActiveSession = require("./models/activesession");
 const { log } = require("console");
-const cors = require('cors');
-app.use(cors({
-  origin: '*'
-}));
+const cors = require("cors");
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+const bodyParser = require("body-parser");
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json()); // to support JSON-encoded bodies
+app.use(express.json());
 
+//view engine
+app.set("view engine", "ejs");
 
-//view engine 
-app.set('view engine','ejs');
-
-//static files 
+//static files
 app.use(express.static(__dirname + "/views"));
 const sequelize = new Sequelize(sequelizeConfig.development);
 (async () => {
@@ -41,14 +46,14 @@ const sequelize = new Sequelize(sequelizeConfig.development);
 //routes
 //route for the root URL
 app.get("/", (req, res) => {
-  var Path = path.join(__dirname,"views","index");
-  console.log("path:"+Path);
+  var Path = path.join(__dirname, "views", "index");
+  console.log("path:" + Path);
   res.render(Path);
 });
 
-//route to list users on webpage 
+//route to list users on webpage
 
-app.get('/users', async (req, res) => {
+app.get("/users", async (req, res) => {
   try {
     const users = await User.findAll({
       where: {
@@ -57,25 +62,24 @@ app.get('/users', async (req, res) => {
     });
     console.log(users);
     res.json(users);
-
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
 app.get("/enroll:rollNo", async (req, res) => {
   try {
     const { rollNo } = req.params; // Get the roll number from the URL parameter
-    const url = `http://192.168.137.240/enroll?id=${rollNo}`
-    console.log("url:" , url);
+    const url = `http://192.168.137.240/enroll?id=${rollNo}`;
+    console.log("url:", url);
     // Send a request to the NodeMCU server to enroll the fingerprint
     const nodeMCUResponse = await axios.get(
-      //ravi yaha pe apna nodemcu wala url daalna 
+      //ravi yaha pe apna nodemcu wala url daalna
       `http://192.168.137.240/enroll?id=${rollNo}`
     );
     // console.log(nodeMCUResponse);
-    console.log("Response: ",nodeMCUResponse.data);
+    console.log("Response: ", nodeMCUResponse.data);
     if (nodeMCUResponse.data.status == "Enrolled") {
       // If enrollment is successful, update the user's fingerprint_id in the database
       const user = await User.findOne({ where: { roll_no: rollNo } });
@@ -98,142 +102,64 @@ app.get("/enroll:rollNo", async (req, res) => {
   }
 });
 
+//route for teacher to create the session 
 
-// app.get('/attendance', async (req, res) => {
-//   try {
-//     const attendanceData = await Attendance.findAll({
-//       attributes: ['AttendanceId', 'SessionId', 'user_id'],
-//     });
-//     res.json(attendanceData);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'An error occurred while fetching attendance data.' });
-//   }
-// });
-
-app.get('/attendance', async (req, res) => {
+app.post("/createSession", async (req, res) => {
   try {
-      const attendanceData = await Attendance.findAll({
-          attributes: ['AttendanceId', 'SessionId', 'user_id'],
-          include: [
-              {
-                  model: ActiveSession,
-                  attributes: ['SessionId', 'TeacherName', 'Subject', 'TimeSlot'],
-              },
-              {
-                  model: User,
-                  attributes: ['user_id', 'name', 'roll_no', 'year', 'branch', 'gender', 'fingerprint_id'],
-              },
-          ],
-      });
-      res.json(attendanceData);
+    // Get data from the client request body
+    console.log("inside create session");
+    const { TeacherName, Subject, Date, TimeSlot } = req.body;
+
+    // Insert the data into the ActiveSession model
+    const newActiveSession = await ActiveSession.create({
+      TeacherName,
+      Subject,
+      Date,
+      TimeSlot,
+    });
+
+    // Send a success response with the inserted data
+    res.status(201).json(newActiveSession);
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'An error occurred while fetching attendance data.' });
+    console.error("Error inserting data into ActiveSession:", error);
+    res.status(500).json({ error: "An error occurred while inserting data." });
   }
 });
 
+app.get("/attendance", async (req, res) => {
+  try {
+    const attendanceData = await Attendance.findAll({
+      attributes: ["AttendanceId", "SessionId", "user_id"],
+      include: [
+        {
+          model: ActiveSession,
+          attributes: ["SessionId", "TeacherName", "Subject", "TimeSlot"],
+        },
+        {
+          model: User,
+          attributes: [
+            "user_id",
+            "name",
+            "roll_no",
+            "year",
+            "branch",
+            "gender",
+            "fingerprint_id",
+          ],
+        },
+      ],
+    });
+    res.json(attendanceData);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching attendance data." });
+  }
+});
 
 // Start the Express server
 app.listen(port, () => {
   console.log(`Server is running on "http://localhost:${port}"`);
 });
 
-
-
-//dummy entry
-// Create an array of user data to insert
-// const userData = [
-//   {
-//     name: 'Jasmit Rathod',
-//     roll_no: 54,
-//     year: 4,
-//     branch: 'IT',
-//     gender: 'M',
-//     fingerprint_id: null, // Initially set to null
-//   },
-//   {
-//     name: 'Om Jannu',
-//     roll_no: 25,
-//     year: 4,
-//     branch: 'IT',
-//     gender: 'M',
-//     fingerprint_id: null, // Initially set to null
-//   },
-//   {
-//     name: 'Tushar Padhy',
-//     roll_no: 42,
-//     year: 4,
-//     branch: 'IT',
-//     gender: 'M',
-//     fingerprint_id: null, // Initially set to null
-//   },
-//   {
-//     name: 'Ravi Pandey',
-//     roll_no: 43,
-//     year: 4,
-//     branch: 'IT',
-//     gender: 'M',
-//     fingerprint_id: null, // Initially set to null
-//   },
-//   {
-//     name: 'Vendra',
-//     roll_no: 64,
-//     year: 4,
-//     branch: 'IT',
-//     gender: 'F',
-//     fingerprint_id: null, // Initially set to null
-//   },
-//   {
-//     name: 'Simar Kaur',
-//     roll_no: 15,
-//     year: 4,
-//     branch: 'IT',
-//     gender: 'F',
-//     fingerprint_id: null, // Initially set to null
-//   },
-//   {
-//     name: 'Suhani Desale',
-//     roll_no: 11,
-//     year: 4,
-//     branch: 'IT',
-//     gender: 'F',
-//     fingerprint_id: null, // Initially set to null
-//   },
-//   {
-//     name: 'Saanvi Naik',
-//     roll_no: 39,
-//     year: 4,
-//     branch: 'IT',
-//     gender: 'F',
-//     fingerprint_id: null, // Initially set to null
-//   },
-//   {
-//     name: 'Kevin Geejo',
-//     roll_no: 26,
-//     year: 4,
-//     branch: 'IT',
-//     gender: 'M',
-//     fingerprint_id: null, // Initially set to null
-//   },
-//   {
-//     name: 'Vaibhav Patil',
-//     roll_no: 50,
-//     year: 2023,
-//     branch: 'IT',
-//     gender: 'M',
-//     fingerprint_id: null, // Initially set to null
-//   }
-// ];
-
-// // Use a loop to create and save each user entry
-// (async () => {
-//   for (const data of userData) {
-//     try {
-//       await User.create(data);
-//       console.log(`User created: ${data.name}`);
-//     } catch (error) {
-//       console.error(`Error creating user: ${data.name}`, error);
-//     }
-//   }
-// })();

@@ -34,8 +34,12 @@ const User = sequelize.define('User', {
   role: {
     type: DataTypes.STRING,
   },
+  },
+  {
+    timestamps: false, // Set timestamps to false
+  });
   // Define other columns if needed
-});
+
 
 User.associate = (models) => {
   User.hasMany(Attendance, { foreignKey: 'user_id' });
