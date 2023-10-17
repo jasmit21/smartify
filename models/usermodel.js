@@ -33,6 +33,7 @@ const User = sequelize.define(
     },
     role: {
       type: DataTypes.STRING, // Set the data type to VARCHAR
+      
       defaultValue: null, // Set the default value to null
     },
   },
@@ -40,5 +41,10 @@ const User = sequelize.define(
     timestamps: false, // Disable createdAt and updatedAt columns
   }
 );
+
+User.associate = (models) => {
+  User.hasMany(Attendance, { foreignKey: 'user_id' });
+};
+
 
 module.exports = User;
