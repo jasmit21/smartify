@@ -1,4 +1,5 @@
 console.log("Welcome");
+const mysql = require('mysql');
 
 //sequelize setup
 
@@ -12,11 +13,15 @@ const path = require('path');
 const { Sequelize } = require("sequelize");
 const sequelizeConfig = require("./config/config");
 const User = require("./models/usermodel");
+const Attendance = require("./models/attendancemodel");
+const ActiveSession = require('./models/activesession'); 
 const { log } = require("console");
 const cors = require('cors');
 app.use(cors({
   origin: '*'
 }));
+
+
 
 //view engine 
 app.set('view engine','ejs');
@@ -50,7 +55,9 @@ app.get('/users', async (req, res) => {
         fingerprint_id: null,
       },
     });
+    console.log(users);
     res.json(users);
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -60,16 +67,16 @@ app.get('/users', async (req, res) => {
 app.get("/enroll:rollNo", async (req, res) => {
   try {
     const { rollNo } = req.params; // Get the roll number from the URL parameter
-    const url = `http://192.168.1.109/enroll?option=1&id=${rollNo}`
+    const url = `http://192.168.137.240/enroll?id=${rollNo}`
     console.log("url:" , url);
     // Send a request to the NodeMCU server to enroll the fingerprint
     const nodeMCUResponse = await axios.get(
       //ravi yaha pe apna nodemcu wala url daalna 
-      `http://192.168.1.109/enroll?option=1&id=${rollNo}`
+      `http://192.168.137.240/enroll?id=${rollNo}`
     );
     // console.log(nodeMCUResponse);
     console.log("Response: ",nodeMCUResponse.data);
-    if (nodeMCUResponse.data.status == 1) {
+    if (nodeMCUResponse.data.status == "Enrolled") {
       // If enrollment is successful, update the user's fingerprint_id in the database
       const user = await User.findOne({ where: { roll_no: rollNo } });
 
@@ -90,6 +97,42 @@ app.get("/enroll:rollNo", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+// app.get('/attendance', async (req, res) => {
+//   try {
+//     const attendanceData = await Attendance.findAll({
+//       attributes: ['AttendanceId', 'SessionId', 'user_id'],
+//     });
+//     res.json(attendanceData);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'An error occurred while fetching attendance data.' });
+//   }
+// });
+
+app.get('/attendance', async (req, res) => {
+  try {
+      const attendanceData = await Attendance.findAll({
+          attributes: ['AttendanceId', 'SessionId', 'user_id'],
+          include: [
+              {
+                  model: ActiveSession,
+                  attributes: ['SessionId', 'TeacherName', 'Subject', 'TimeSlot'],
+              },
+              {
+                  model: User,
+                  attributes: ['user_id', 'name', 'roll_no', 'year', 'branch', 'gender', 'fingerprint_id'],
+              },
+          ],
+      });
+      res.json(attendanceData);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while fetching attendance data.' });
+  }
+});
+
 
 // Start the Express server
 app.listen(port, () => {
