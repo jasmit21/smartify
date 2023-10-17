@@ -151,7 +151,7 @@
       $(document).ready(function () {
         console.log("Inside Jquery");
         $.ajax({
-          url: "http://localhost:3000/users", // Route to fetch user data from your Node.js server
+          url: "/users", // Route to fetch user data from your Node.js server
           type: "GET",
           dataType: "json",
           success: function (data) {
@@ -181,7 +181,7 @@
               const rollNo = $(this).data("rollno");
               // Send an AJAX request to enroll endpoint
               $.ajax({
-                url: `http://localhost:3000/enroll${rollNo}`,
+                url: `/enroll${rollNo}`,
                 type: "GET", // or 'GET' depending on your server endpoint
                 success: function (response) {
                   // Handle the response if needed
