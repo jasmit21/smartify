@@ -6,7 +6,7 @@
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [Hardware Requirements](#hardware-requirements)
-- [Circuit Diagram] 
+- [Circuit Diagram] (Circuit Diagram.png)
 - [Software Requirements](#software-requirements)
 - [Installation](#installation)
 - [Usage](#usage)
