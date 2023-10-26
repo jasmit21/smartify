@@ -44,7 +44,7 @@ const sequelize = new Sequelize(sequelizeConfig.development);
 })();
 
 //url
-const nodemcuUrl = `http://192.168.137.203`;
+const nodemcuUrl = `http://10.42.0.230`;
 //routes
 //route for the root URL
 app.get("/", (req, res) => {
@@ -62,7 +62,7 @@ app.get("/users", async (req, res) => {
         fingerprint_id: null,
       },
     });
-    console.log(users);
+    // console.log(users);
     res.json(users);
   } catch (error) {
     console.error(error);
@@ -70,6 +70,7 @@ app.get("/users", async (req, res) => {
   }
 });
 
+//Route to enroll a student 
 app.get("/enroll:rollNo", async (req, res) => {
   try {
     const { rollNo } = req.params; // Get the roll number from the URL parameter
@@ -81,7 +82,7 @@ app.get("/enroll:rollNo", async (req, res) => {
       `${nodemcuUrl}/enroll?id=${rollNo}`
     );
     // console.log(nodeMCUResponse);
-    // console.log("Response: ", nodeMCUResponse.data);
+    console.log("Response: ", nodeMCUResponse.data.status);
     if (nodeMCUResponse.data.status == "Enrolled") {
       // If enrollment is successful, update the user's fingerprint_id in the database
       const user = await User.findOne({ where: { roll_no: rollNo } });
@@ -128,7 +129,7 @@ app.post("/createSession", async (req, res) => {
   }
 });
 
-//mark attendance
+//Route for student to mark attendance
 app.post("/markAttendance", async (req, res) => {
   try {
     // Get data from the client request (TeacherName, Subject, TimeSlot, and RollNo)
@@ -146,6 +147,7 @@ app.post("/markAttendance", async (req, res) => {
     });
 
     if (activeSession) {
+      console.log(`------------session exists with session id = ${activeSession.SessionId}`);
       // Now, check if the RollNo exists in the User table (assuming 'RollNo' is the column name)
       // const user = await User.findOne({ where: { roll_no } });
       const user = await User.findOne({ where: { roll_no: RollNo } });
@@ -153,11 +155,12 @@ app.post("/markAttendance", async (req, res) => {
       if (user) {
         // Student details match an active session and a user with the provided RollNo exists
         // Insert data into the Attendances table
+        console.log(`-------User ${user.name} found with the provided roll No.-----------`);
         const nodemcuResponse = await axios.get(
           `${nodemcuUrl}/verify?id=${RollNo}`,
           { roll_no: RollNo }
         );
-
+        console.log("------NodeMCU req sent ----");
         if (nodemcuResponse.data.status === "Match") {
           // Insert data into the Attendances table
           const attendanceData = {
@@ -165,7 +168,7 @@ app.post("/markAttendance", async (req, res) => {
             user_id: user.user_id,
           };
           const attendance = await Attendance.create(attendanceData);
-
+          console.log("Session is active, student exists, attendance recorded.");
           res.json({
             message: "Session is active, student exists, attendance recorded.",
           });
@@ -191,7 +194,7 @@ app.post("/markAttendance", async (req, res) => {
       .json({ error: "An error occurred while checking the active session." });
   }
 });
-//
+
 // Define a POST route to deactivate a session
 app.post('/deactivateSession', async (req, res) => {
   try {
@@ -223,41 +226,14 @@ app.post('/deactivateSession', async (req, res) => {
   }
 });
 
-//
-app.get("/attendance", async (req, res) => {
-  try {
-    const attendanceData = await Attendance.findAll({
-      attributes: ["AttendanceId", "SessionId", "user_id"],
-      include: [
-        {
-          model: ActiveSession,
-          attributes: ["SessionId", "TeacherName", "Subject", "TimeSlot"],
-        },
-        {
-          model: User,
-          attributes: [
-            "user_id",
-            "name",
-            "roll_no",
-            "year",
-            "branch",
-            "gender",
-            "fingerprint_id",
-          ],
-        },
-      ],
-    });
-    res.json(attendanceData);
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching attendance data." });
-  }
-});
+//Route to retrieve the attendance data 
+app.post('/attendaceDetails', async (req,res)=>{
+console.log('-------------------------Inside /attendaceDetails Route ------------------------------ ');
 
+});
 // Start the Express server
 app.listen(port, () => {
+
   console.log(`Server is running on "http://localhost:${port}"`);
   console.log(`Server is running on "http://128.199.23.207:${port}"`);
 });
