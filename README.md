@@ -37,13 +37,11 @@ Our aim is to make the attendance process effortless for both students and teach
 
 - NodeMCU ESP8266
 - R305 Fingerprint Scanner
-- Additional hardware components (please list them)
 
 ## Software Requirements
 
 - Arduino IDE
-- Mobile app development tools (if applicable)
-- Web development tools (if applicable)
+- Vs Code
 
 ## Installation
 
