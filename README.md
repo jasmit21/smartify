@@ -39,6 +39,10 @@ Our aim is to make the attendance process effortless for both students and teach
 - NodeMCU ESP8266
 - R305 Fingerprint Scanner
 
+## Circuit Diagram
+![Circuit Diagram](https://github.com/jasmit21/smartify/raw/main/Circuit%20Diagram.png)
+
+
 ## Software Requirements
 
 - Arduino IDE
