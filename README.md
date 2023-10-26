@@ -6,7 +6,7 @@
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [Hardware Requirements](#hardware-requirements)
-- [Circuit Diagram] (Circuit Diagram.png)
+- [Circuit Diagram](https://github.com/jasmit21/smartify/blob/main/Circuit%20Diagram.png?raw=true)
 - [Software Requirements](#software-requirements)
 - [Installation](#installation)
 - [Usage](#usage)
