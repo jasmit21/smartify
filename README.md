@@ -7,6 +7,7 @@
 - [Features](#features)
 - [Hardware Requirements](#hardware-requirements)
 - [Circuit Diagram](https://github.com/jasmit21/smartify/blob/main/Circuit%20Diagram.png?raw=true)
+- [Programing nodemcu with arduino ide](#programming-nodemcu-with-arduino-ide)
 - [Software Requirements](#software-requirements)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -42,6 +43,12 @@ Our aim is to make the attendance process effortless for both students and teach
 ## Circuit Diagram
 ![Circuit Diagram](https://github.com/jasmit21/smartify/raw/main/Circuit%20Diagram.png)
 
+## Programming nodemcu with arduino ide
+
+1. Install arduino ide from [here](https://www.arduino.cc/en/software)
+2. Connect the fingerprint sensor with nodemcu according to circuit diagram
+3. Create a new sketch and paste the code from [here](https://github.com/jasmit21/smartify/blob/main/nodemuccode.ino)
+4. Upload the code and see the output in serial monitor
 
 ## Software Requirements
 
