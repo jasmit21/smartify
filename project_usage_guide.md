@@ -23,6 +23,7 @@ Follow these steps to clone the project and get it up and running on your local 
 2. Open the project directory in Visual Studio Code:
 
 `cd smartify`
+
 `code .`
 
 3. In your terminal, navigate to the project folder
