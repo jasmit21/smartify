@@ -10,7 +10,7 @@
 - [Software Requirements](#software-requirements)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contribution](#Contribution)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Introduction
@@ -57,17 +57,9 @@ Our aim is to make the attendance process effortless for both students and teach
 
 1. Refer to [Project SetUp Guide](https://github.com/jasmit21/smartify/blob/main/project_usage_guide.md) to setup locally.
 
-## Contribution
+## Contributing
 
-We welcome and encourage contributions from the open-source community. If you'd like to contribute to the Smartify project, please follow these steps:
-
-1. Fork the project repository on GitHub.
-2. Create a new branch for your feature or bug fix: `git checkout -b feature/your-feature-name` or `git checkout -b bugfix/your-bugfix-name`.
-3. Make your changes and ensure that your code follows the project's coding standards.
-4. Test your changes thoroughly.
-5. Commit your changes with descriptive commit messages.
-6. Push your changes to your fork on GitHub: `git push origin feature/your-feature-name`.
-7. Create a pull request to the main project repository, explaining your changes and their benefits.
+If you'd like to contribute to the Smartify project, please follow the guidelines outlined in our [Contribution Guide](CONTRIBUTING.md). We welcome contributions from the open-source community to help make Smartify even better.
 
 We will review your contributions and merge them if they align with the project's goals and coding standards. Thank you for helping to make Smartify even better!
 
