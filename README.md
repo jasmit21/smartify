@@ -10,7 +10,7 @@
 - [Software Requirements](#software-requirements)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
+- [Contribution](#Contribution)
 - [License](#license)
 
 ## Introduction
