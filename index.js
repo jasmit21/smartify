@@ -44,7 +44,7 @@ const sequelize = new Sequelize(sequelizeConfig.development);
 })();
 
 //url
-const nodemcuUrl = `http://10.42.0.230`;
+const nodemcuUrl = `http://192.168.137.249`;
 //routes
 //route for the root URL
 app.get("/", (req, res) => {
@@ -231,7 +231,46 @@ app.post('/attendaceDetails', async (req,res)=>{
 console.log('-------------------------Inside /attendaceDetails Route ------------------------------ ');
 
 });
+// Define the /getattendance route with a POST method
+app.post('/getattendance', async (req, res) => {
+  try {
+    const { TeacherName, Subject, TimeSlot,Date  } = req.body; // Assuming you're sending this data in the request body
+
+    // Step 1: Get the SessionId based on TeacherName, Subject, Date, and TimeSlot
+    const session = await ActiveSession.findOne({
+      where: { TeacherName, Subject, Date, TimeSlot },
+    });
+
+    if (!session) {
+      return res.status(404).json({ message: 'Session not found' });
+    }
+
+    // Step 2: Get Attendances for the found SessionId
+    const attendances = await Attendance.findAll({
+      where: { SessionId: session.SessionId },
+    });
+
+    if (attendances.length === 0) {
+      return res.status(404).json({ message: 'No attendance records found for this session' });
+    }
+
+    // Step 3: Get user details for the UserIds in attendances
+    const userIds = attendances.map((attendance) => attendance.user_id);
+    const users = await User.findAll({
+      where: { user_id: userIds }, // Use the appropriate field name for your User model
+      attributes: ['user_id', 'name', 'roll_no', 'branch'], // Select the fields you want to fetch
+    });
+
+    // Step 4: Return the result
+    console.log("resultsssss:",users);
+    res.json({ session, users });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 // Start the Express server
+
 app.listen(port, () => {
 
   console.log(`Server is running on "http://localhost:${port}"`);
